@@ -1,0 +1,73 @@
+﻿<Window x:Class="ExchangeRate.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExchangeRate"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
+        Title="Котировки" Height="300" Width="600" MinHeight="200" MinWidth="200">
+    <Grid Background="DarkGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="20"/>
+            <RowDefinition Height="*" MinHeight="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*" MinWidth="100"/>
+            <ColumnDefinition Width="*" MinWidth="100"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto" Margin="1">
+            <Button DockPanel.Dock="Right" Margin="1" VerticalAlignment="Center" Width="Auto" Height="Auto" Click="SearchButton_OnClick">Поиск</Button>
+            <TextBox Margin="1" VerticalAlignment="Center" Width="Auto" Height="Auto" Text="{Binding Path=ToSearch, UpdateSourceTrigger=PropertyChanged}" KeyDown="UIElement_OnKeyDown"/>
+        </DockPanel>
+        <DockPanel Grid.Row="0" Grid.Column="1" Width="Auto" Height="Auto" Margin="1">
+            <Button DockPanel.Dock="Right" Margin="1" VerticalAlignment="Center" Width="Auto" Height="Auto" Click="LoadButton_OnClick">Загрузить</Button>
+            <DatePicker x:Name="DateToLoad" Margin="1" VerticalAlignment="Center" Width="Auto" Height="Auto" SelectedDate="{Binding ToLoadDateTime}" DisplayDateEnd="{x:Static System:DateTime.Now}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="0" Margin="1">
+            <TextBlock DockPanel.Dock="Top" TextAlignment="Left">Коды валют</TextBlock>
+            <ListView ItemsSource="{Binding FilteredDataCollection}" SelectedItem="{Binding SelectedData}" SelectionMode="Single">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="Auto" DisplayMemberBinding="{Binding Path=Code}" >Код</GridViewColumn>
+                        <GridViewColumn Width="Auto" DisplayMemberBinding="{Binding Path=Name}" >Название</GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="1">
+            <TextBlock DockPanel.Dock="Top" TextAlignment="Left" Text="{Binding ComparisonTitle}"/>
+            <TextBox Text="{Binding CurrencyToRubAndUsd}" Height="40" MinHeight="40"/>
+            <TextBlock Height="Auto" Margin="1">Конвертация</TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ComboBox Grid.Row="0" Grid.Column="0" Height="Auto" ItemsSource="{Binding Path=FilteredDataCollection}" SelectedItem="{Binding Path=ConvertFrom, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Code}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox Grid.Row="0" Grid.Column="1" Height="20" MinHeight="20" Text="{Binding ValueToConvert, Mode=TwoWay, StringFormat={}{0:0.####}, UpdateSourceTrigger=PropertyChanged}" TextChanged="ToConvert_OnTextChanged"></TextBox>
+                <ComboBox Grid.Row="1" Grid.Column="0" Height="Auto" ItemsSource="{Binding Path=FilteredDataCollection}" SelectedItem="{Binding Path=ConvertTo, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Code}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox Grid.Row="1" Grid.Column="1" Height="20" MinHeight="20" Text="{Binding ValueConverted, Mode=OneWay, StringFormat={}{0:0.####}, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"></TextBox>
+                <Button Grid.Row="2" Grid.Column="0" DockPanel.Dock="Right" Margin="1" HorizontalAlignment="Left" Width="Auto" Height="Auto" Click="SwapButton_OnClick">Поменять местами</Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
